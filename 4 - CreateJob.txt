@@ -1,0 +1,16 @@
+DECLARE
+  X NUMBER;
+BEGIN
+  SYS.DBMS_JOB.SUBMIT
+  ( job       => X 
+   ,what      => 'x_ph_clear_dml_audit_table;'
+   ,next_date => to_date('03/03/2010 11:26:44','dd/mm/yyyy hh24:mi:ss')
+   ,interval  => 'sysdate+(1/24/60)'
+   ,no_parse  => FALSE
+  );
+  SYS.DBMS_OUTPUT.PUT_LINE('Job Number is: ' || to_char(x));
+COMMIT;
+END;
+/
+
+

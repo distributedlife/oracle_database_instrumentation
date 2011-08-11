@@ -1,0 +1,9 @@
+Oracle Database Instrumentation
+-------------------------------
+Author: Ryan Boucher, Peter Holland
+
+These scripts are designed to be used with an oracle database with the goal of adding instrumentation for the purpose of discovering unknown behaviour.
+
+These scripts are not in a state where they can be easily used against an oracle install but with a few minor changes they will work.
+
+Please contact me if you want to use these scripts and I'll help where I can.

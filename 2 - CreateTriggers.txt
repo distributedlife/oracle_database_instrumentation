@@ -1,0 +1,47 @@
+declare
+
+  vCount number := 0;
+  
+  CURSOR crTables IS
+    SELECT TABLE_NAME
+    FROM   ALL_TABLES
+    WHERE  OWNER = '<schema>'
+    AND    TABLE_NAME NOT LIKE '%_JN'
+    AND    TABLE_NAME NOT LIKE 'RUPD$%'
+    AND    TABLE_NAME NOT LIKE 'DR$%'
+    AND    TABLE_NAME NOT LIKE 'DR#%'
+    AND    TABLE_NAME NOT LIKE 'MLOG$%'
+    AND    TABLE_NAME NOT LIKE 'X%'
+    AND    TABLE_NAME NOT LIKE 'Z%'
+    AND    TABLE_NAME NOT LIKE '%$%'
+    AND    TABLE_NAME NOT IN ('GENERAL_AUDIT_LOG','DDL_AUDIT','CCR_UPLOAD_LOG')
+    ORDER BY TABLE_NAME;
+  
+begin  
+
+  for vcrTables in crTables loop
+
+      vCount := vCount + 1;
+      execute immediate (
+'CREATE OR REPLACE TRIGGER DML_AUD_' || vCount || ' AFTER DELETE OR INSERT OR UPDATE ON ' || vcrTables.Table_Name || ' FOR EACH ROW
+ DECLARE
+    vOperation X_PH_DML_AUDIT.OPERATION%type;
+ BEGIN
+    IF INSERTING THEN
+       vOperation := ''INS'';
+    ELSIF UPDATING THEN
+       vOperation := ''UPD'';
+    ELSIF DELETING THEN
+       vOperation := ''DEL'';
+    END IF;
+ 
+    INSERT INTO X_PH_DML_AUDIT
+       (ID, DATE_TIME_CHANGE, TABLE_NAME, OPERATION, DB_USER, OS_USER)
+    VALUES
+       (X_PH_DML_AUDIT_SEQ.nextval, sysdate, ''' || vcrTables.Table_Name || ''', vOperation, user, TRIM(SYS_CONTEXT (''USERENV'', ''OS_USER'')));
+ END;');
+
+  end loop;
+                            
+end;
+

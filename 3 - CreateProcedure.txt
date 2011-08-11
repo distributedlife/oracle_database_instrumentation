@@ -1,0 +1,11 @@
+CREATE OR REPLACE PROCEDURE x_ph_clear_dml_audit_table 
+IS
+BEGIN
+
+  DELETE X_PH_DML_AUDIT
+  WHERE  DATE_TIME_CHANGE < (sysdate - (1/12));
+  
+  COMMIT;
+
+END x_ph_clear_dml_audit_table;
+/

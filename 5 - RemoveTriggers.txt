@@ -1,0 +1,16 @@
+declare
+
+  cursor crTriggers is
+    select trigger_name
+    from   all_triggers
+    where  owner = '<schema>'
+    and    trigger_name like 'DML_AUD%';
+
+begin
+
+  for vcrTriggers in crTriggers loop
+      execute immediate 'DROP TRIGGER ' || vcrTriggers.trigger_name;
+  end loop;
+
+end;
+
